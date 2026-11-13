@@ -1,4 +1,4 @@
 require("opts")
-require("keymaps")
-require("themes")
+require("plugins.themes")
 require("config.lazy")
+require("keymaps")
