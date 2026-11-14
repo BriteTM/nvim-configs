@@ -92,7 +92,7 @@ local spotlight = require('spotlight')
 
 map('n', '<leader>e', function() spotlight.open_explorer() end, { desc = 'File Browser' })
 map('n', '<leader>.', function() spotlight.spotlight() end, { desc = 'Spotlight Runner' })
-map('n', '<leader>cd', '<Cmd>Fb ~/<CR>', { desc = 'Change Directory' })
+map('n', '<leader>cf', '<Cmd>Fb ~/<CR>', { desc = 'Change Folder' })
 map('n', '<leader>t', function() spotlight.toggle_terminal() end, { desc = 'Toggle Terminal' })
 
 -- Obsidian
@@ -100,3 +100,17 @@ map('n', '<leader>oo', '<Cmd>ObsidianQuickSwitch<CR>', { desc = 'Obsidian Quick 
 map('n', '<leader>os', '<Cmd>ObsidianSearch<CR>', { desc = 'Obsidian Search' })
 map('n', '<leader>on', '<Cmd>ObsidianNew<CR>', { desc = 'Obsidian New Note' })
 map('n', '<leader>ot', '<Cmd>ObsidianToday<CR>', { desc = 'Obsidian Today (Daily Note)' })
+
+
+-- Keymaps for debugging
+local dap = require("dap")
+
+map("n", "<leader>ds", "<Cmd>DapDisconnect<CR>", { desc = "Debug: Stop" })
+map("n", "<leader>dc", dap.continue, { desc = "Debug: Start/Continue" })
+map("n", "<leader>di", dap.step_into, { desc = "Debug: Step Into" })
+map("n", "<leader>do", dap.step_over, { desc = "Debug: Step Over" })
+map("n", "<leader>dO", dap.step_out, { desc = "Debug: Step Out" })
+map("n", "<leader>db", dap.toggle_breakpoint, { desc = "Debug: Toggle Breakpoint" })
+map("n", "<leader>dB", function()
+	dap.set_breakpoint(vim.fn.input('Breakpoint condition: '))
+end, { desc = "Debug: Conditional Breakpoint" })

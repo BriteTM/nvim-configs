@@ -4,7 +4,7 @@ return {
 	opts = {
 		default = {
 			-- Save into the vault's Images folder (absolute, so it works from any subfolder)
-			dir_path = "/home/brite/Windows/Users/brite/Documents/Obsidian/Images",
+			dir_path = "/home/brite/Documents/Obsidian/Images/",
 			extension = "png",
 			-- Matches Obsidian's naming: "Pasted image 20261111134600.png"
 			file_name = "Pasted image %Y%m%d%H%M%S",
