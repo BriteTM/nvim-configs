@@ -10,6 +10,11 @@ map({ 'n', 'x' }, '<leader>fd', '<Cmd>Fb ~/Documents/Reports<CR>', { desc = 'Fin
 map('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 map('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 
+vim.keymap.set({ "n", "o", "x" }, "w", "<cmd>lua require('spider').motion('w')<CR>")
+vim.keymap.set({ "n", "o", "x" }, "e", "<cmd>lua require('spider').motion('e')<CR>")
+vim.keymap.set({ "n", "o", "x" }, "b", "<cmd>lua require('spider').motion('b')<CR>")
+vim.keymap.set({ "n", "o", "x" }, "ge", "<cmd>lua require('spider').motion('ge')<CR>")
+
 map('n', '<C-H>', '<C-w>h')
 map('n', '<C-J>', '<C-w>j')
 map('n', '<C-K>', '<C-w>k')
@@ -22,41 +27,30 @@ map('n', '<leader>li', ':checkhealth vim.lsp<CR>', { desc = 'Show LSP Info' })
 
 -- LspAttach
 vim.api.nvim_create_autocmd('LspAttach', {
-	desc = 'Standard and Rust-specific LSP actions',
-	callback = function(args)
-		local bufnr = args.buf
-		local client = vim.lsp.get_client_by_id(args.data.client_id)
-		local opts = { buffer = bufnr, silent = true }
+  desc = 'Standard and Rust-specific LSP actions',
+  callback = function(args)
+    local bufnr = args.buf
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    local opts = { buffer = bufnr, silent = true }
 
-		-- Auto Format
-		if client and client.server_capabilities.documentFormattingProvider then
-			vim.api.nvim_create_autocmd('BufWritePre', {
-				buffer = bufnr,
-				callback = function()
-					vim.lsp.buf.format({ bufnr = bufnr, id = client.id })
-				end,
-				desc = 'Format on save'
-			})
-		end
+    -- Keymaps
+    map('n', 'gd', function() vim.lsp.buf.definition() end, opts)
+    map('n', '<leader>cd', function() vim.diagnostic.open_float() end, opts)
+    map('n', '[d', function() vim.diagnostic.jump({ count = -1 }) end, opts)
+    map('n', ']d', function() vim.diagnostic.jump({ count = 1 }) end, opts)
 
-		-- Keymaps
-		map('n', 'gd', function() vim.lsp.buf.definition() end, opts)
-		map('n', '<leader>cd', function() vim.diagnostic.open_float() end, opts)
-		map('n', '[d', function() vim.diagnostic.jump({ count = -1 }) end, opts)
-		map('n', ']d', function() vim.diagnostic.jump({ count = 1 }) end, opts)
-
-		-- Rustaceanvim Keybinds
-		if client and client.name == 'rust-analyzer' then
-			map('n', '<leader>ca', function() vim.cmd.RustLsp('codeAction') end, opts)
-			map('n', 'K', function() vim.cmd.RustLsp({ 'hover', 'actions' }) end, opts)
-			map('n', '<leader>lf', function()
-				vim.lsp.buf.format({ bufnr = bufnr })
-			end, { silent = true, buffer = bufnr, desc = 'Format Buffer' })
-		else
-			map('n', 'K', function() vim.lsp.buf.hover() end, opts)
-			map('n', '<leader>ca', function() vim.lsp.buf.code_action() end, opts)
-		end
-	end
+    -- Rustaceanvim Keybinds
+    if client and client.name == 'rust-analyzer' then
+      map('n', '<leader>ca', function() vim.cmd.RustLsp('codeAction') end, opts)
+      map('n', 'K', function() vim.cmd.RustLsp({ 'hover', 'actions' }) end, opts)
+      map('n', '<leader>lf', function()
+        vim.lsp.buf.format({ bufnr = bufnr })
+      end, { silent = true, buffer = bufnr, desc = 'Format Buffer' })
+    else
+      map('n', 'K', function() vim.lsp.buf.hover() end, opts)
+      map('n', '<leader>ca', function() vim.lsp.buf.code_action() end, opts)
+    end
+  end
 })
 
 -- Telescope
@@ -76,7 +70,7 @@ map('n', '<leader>u', '<Cmd>Undotreetoggle<CR>', { desc = 'Undotree' })
 -- Harpoon
 map('n', '<leader>ha', function() require('harpoon'):list():add() end, { desc = 'Harpoon Add' })
 map('n', '<leader>he', function() require('harpoon').ui:toggle_quick_menu(require('harpoon'):list()) end,
-	{ desc = 'Harpoon Menu' })
+  { desc = 'Harpoon Menu' })
 map('n', '<leader>1', function() require('harpoon'):list():select(1) end, { desc = 'Harpoon 1' })
 map('n', '<leader>2', function() require('harpoon'):list():select(2) end, { desc = 'Harpoon 2' })
 map('n', '<leader>3', function() require('harpoon'):list():select(3) end, { desc = 'Harpoon 3' })
@@ -112,5 +106,5 @@ map("n", "<leader>do", dap.step_over, { desc = "Debug: Step Over" })
 map("n", "<leader>dO", dap.step_out, { desc = "Debug: Step Out" })
 map("n", "<leader>db", dap.toggle_breakpoint, { desc = "Debug: Toggle Breakpoint" })
 map("n", "<leader>dB", function()
-	dap.set_breakpoint(vim.fn.input('Breakpoint condition: '))
+  dap.set_breakpoint(vim.fn.input('Breakpoint condition: '))
 end, { desc = "Debug: Conditional Breakpoint" })
